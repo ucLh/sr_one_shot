@@ -23,7 +23,7 @@ def parse_args(argv):
     return ap.parse_args(argv)
 
 
-def main(args: argparse.Namespace):
+def demo(args: argparse.Namespace):
     # Read params
     scale = cfg.scale
     device = cfg.device
@@ -100,4 +100,4 @@ def main(args: argparse.Namespace):
 
 
 if __name__ == '__main__':
-    main(parse_args(sys.argv[1:]))
+    demo(parse_args(sys.argv[1:]))

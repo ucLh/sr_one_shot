@@ -28,6 +28,7 @@ class PixelLossTuner(AbstractTuner):
     This approach of MSE loss usage is usually called `pixel loss`, hence the name.
     """
     def __init__(self, model, device=None):
+        #TODO Pass model params instead of model
         self.cfg = cfg_pixel
         self.pixel_loss = torch.nn.MSELoss(reduction='mean')
         self.optimizer = torch.optim.Adam(model.parameters(), lr=self.cfg.lr)
@@ -39,6 +40,7 @@ class PixelLossTuner(AbstractTuner):
         """
         Tunes model inplace
         """
+        self.optimizer = torch.optim.Adam(model.parameters(), lr=self.cfg.lr)
         model.train()
         for i in range(n_iters):
             sr_t = model(lr_t)
@@ -46,7 +48,7 @@ class PixelLossTuner(AbstractTuner):
             loss.backward()
             self.optimizer.step()
             self.optimizer.zero_grad()
-            del sr_t
+        model.eval()
 
 
 class PerceptualLossTuner(AbstractTuner):
@@ -85,6 +87,7 @@ class PerceptualLossTuner(AbstractTuner):
         """
         Tunes model inplace
         """
+        self.optimizer = torch.optim.Adam(model.parameters(), lr=self.cfg.lr)
         with torch.no_grad():
             hr_feat = self.extractor(hr_t)
 
