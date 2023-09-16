@@ -1,0 +1,9 @@
+easydict>=1.9
+imagesize>=1.4.1
+numpy>=1.21.2
+opencv_python>=4.5.3.56
+piq>=0.8.0
+torch>=2.0.1
+torchsr>=1.0.4
+torchvision>=0.15.2
+tqdm
