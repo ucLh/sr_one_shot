@@ -6,6 +6,7 @@ import torch
 from torch.utils.data import Dataset
 from torchvision.transforms.functional import to_tensor
 import imagesize
+import filetype
 
 
 class SRDataset(Dataset):
@@ -22,6 +23,7 @@ class SRDataset(Dataset):
 
     def read_folders(self):
         hr_names = sorted(os.listdir(self.hr_folder))
+        hr_names = list(filter(lambda x: filetype.is_image(os.path.join(self.hr_folder, x)), hr_names))
         self.create_lr_images(hr_names)
         return hr_names
 
