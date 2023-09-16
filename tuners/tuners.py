@@ -57,7 +57,9 @@ class PerceptualLossTuner(AbstractTuner):
     We then infer (sr_t) and (hr_t) through the first few layers of a frozen network pretrained on image net (vgg in
     this case) to obtain tensors (sr_feat) and (hr_feat). MSE loss is then applied to (sr_feat) and (hr_feat), and
     a gradient step is done.
-     This approach of MSE loss usage is usually called `perceptual loss`, hence the name.
+    This approach of MSE loss usage is usually called `perceptual loss`, hence the name.
+    I've learnt about this approach from the article
+    "Perceptual Losses for Real-Time Style Transfer and Super-Resolution" (https://arxiv.org/pdf/1603.08155.pdf)
     """
     def __init__(self, model, device):
         self.cfg = cfg_perceptual
