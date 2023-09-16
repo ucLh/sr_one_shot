@@ -77,7 +77,7 @@ class PerceptualLossTuner(AbstractTuner):
         cfg = [64, 64, 'M', 128]
         extractor = make_layers(cfg, batch_norm=False)
         ckpt = torch.load(self.cfg.extractor_weights)
-        extractor.load_state_dict(ckpt, strict=False)
+        extractor.load_state_dict(ckpt, strict=True)
         for param in extractor.parameters():
             param.requires_grad_(False)
         extractor.to(self.device)
