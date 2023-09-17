@@ -19,6 +19,14 @@ def parse_args(argv):
     ap = argparse.ArgumentParser()
     ap.add_argument('--tuner', choices=['perceptual', 'pixel'], default='perceptual',
                     help='Tuner type')
+    ap.add_argument('--hr_folder', default='assets/img/custom_hr',
+                    help='Path to the input. Should be a path to a directory with high resolution images')
+    ap.add_argument('--lr_folder', default='assets/img/custom_lr',
+                    help='Directory with low resolution images. If the folder is empty the images will be'
+                         'produced automatically via high resolution image interpolation.'
+                         'Image names must match with the names in --hr_folder. See more in data.py')
+    ap.add_argument('--vis_folder', default='assets/img/vis',
+                    help='Directory where output images will be saved')
     ap.add_argument('--visualize', action='store_true',
                     help='Whether to visualize super resolution result')
     return ap.parse_args(argv)
@@ -41,7 +49,7 @@ def demo(args: argparse.Namespace):
         raise NotImplementedError()
 
     # Create dataset
-    dataset = SRDataset(cfg.hr_folder, cfg.lr_folder, scale=scale)
+    dataset = SRDataset(args.hr_folder, args.lr_folder, scale=scale)
     dataloader = DataLoader(
         dataset,
         batch_size=1,
@@ -85,7 +93,7 @@ def demo(args: argparse.Namespace):
             sr_mod = to_array(sr_t_tuned)
 
             # Save super resolution images
-            visualization_folder = cfg.vis_folder
+            visualization_folder = args.vis_folder
             Path(visualization_folder).mkdir(parents=True, exist_ok=True)
             # Save original sr prediction
             cv2.imwrite(os.path.join(visualization_folder, name), sr)

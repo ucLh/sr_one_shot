@@ -14,9 +14,12 @@ from sr_one_shot.tuners import PerceptualLossTuner, PixelLossTuner
 
 def test_demo_correct():
     # Test scenarios run with correct params
-    namespace = argparse.Namespace(tuner='pixel', visualize=True)
-    namespace2 = argparse.Namespace(tuner='perceptual', visualize=True)
-    namespace3 = argparse.Namespace(tuner='pixel', visualize=False)
+    namespace = argparse.Namespace(tuner='pixel', visualize=True, hr_folder='assets/img/custom_hr',
+                                   lr_folder='assets/img/custom_lr', vis_folder='assets/img/vis')
+    namespace2 = argparse.Namespace(tuner='perceptual', visualize=True, hr_folder='assets/img/custom_hr',
+                                    lr_folder='assets/img/custom_lr', vis_folder='assets/img/vis')
+    namespace3 = argparse.Namespace(tuner='pixel', visualize=False, hr_folder='assets/img/custom_hr',
+                                    lr_folder='assets/img/custom_lr', vis_folder='assets/img/vis')
 
     demo(namespace)
     demo(namespace2)
@@ -24,7 +27,8 @@ def test_demo_correct():
 
 
 def test_demo_incorrect():
-    namespace_error = argparse.Namespace(tuner='pixel111', visualize=True)
+    namespace_error = argparse.Namespace(tuner='pixel111', visualize=True, hr_folder='assets/img/custom_hr',
+                                         lr_folder='assets/img/custom_lr', vis_folder='assets/img/vis')
 
     with pytest.raises(NotImplementedError):
         demo(namespace_error)

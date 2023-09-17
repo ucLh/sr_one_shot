@@ -45,6 +45,7 @@ class SRDataset(Dataset):
             cv2.imwrite(lr_path, img)
 
         Path(self.lr_folder).mkdir(parents=True, exist_ok=True)
+        # Low resolution names should be the same as the hr_names
         for name in hr_names:
             lr_path = os.path.join(self.lr_folder, name)
             hr_path = os.path.join(self.hr_folder, name)
