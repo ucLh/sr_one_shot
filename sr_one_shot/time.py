@@ -1,5 +1,5 @@
-from config import cfg
-from tuners import PerceptualLossTuner, PixelLossTuner
+from .config import cfg
+from .tuners import PerceptualLossTuner, PixelLossTuner
 import torch
 from torchsr.models import carn
 import numpy as np

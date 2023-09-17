@@ -6,10 +6,10 @@ First draft of the README
 
 * Run the demo that compares PSNR and save super resolution results
 ```shell script
-python3 main.py --visualize
+python3 -m sr_one_shot.main --visualize
 ```
 
 * Run time measurements
 ```shell script
-python3 time.py
+python3 -m sr_one_shot.time
 ```

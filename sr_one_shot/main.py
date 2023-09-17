@@ -1,7 +1,7 @@
 import argparse
-from data import SRDataset, to_array
-from config import cfg
-from tuners import PerceptualLossTuner, PixelLossTuner, TunerTypes
+from .data import SRDataset, to_array
+from .config import cfg
+from .tuners import PerceptualLossTuner, PixelLossTuner, TunerTypes
 import torch
 from torchsr.models import carn
 from torch.utils.data import DataLoader

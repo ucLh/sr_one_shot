@@ -1,15 +1,15 @@
 import pytest
 import sys
 import os
-sys.path.append(os.path.realpath(os.path.dirname(__file__)+"/.."))
-from main import demo
+# sys.path.append(os.path.realpath(os.path.dirname(__file__)+"/.."))
+from sr_one_shot.main import demo
 import argparse
 import torch
 from torchsr.models import carn
 from torchvision.transforms.functional import to_tensor
 import cv2
 from piq import psnr
-from tuners import PixelLossTuner, PerceptualLossTuner
+from sr_one_shot.tuners import PixelLossTuner, PerceptualLossTuner
 import numpy as np
 
 
