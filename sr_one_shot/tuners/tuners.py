@@ -1,8 +1,10 @@
 from abc import ABC
-from .config import cfg_pixel, cfg_perceptual
+from enum import Enum
+
 import torch
 from torchvision.models.vgg import make_layers
-from enum import Enum
+
+from .config import cfg_perceptual, cfg_pixel
 
 
 class TunerTypes(Enum):
@@ -15,7 +17,7 @@ class TunerTypes(Enum):
 
 class AbstractTuner(ABC):
     """
-    Abstract Tuner class that set the tune method interface
+    Abstract Tuner class that sets the tune method interface
     """
     def tune(self, model: torch.nn.Module, hr_t: torch.Tensor, lr_t, n_iters: int):
         pass
@@ -36,13 +38,23 @@ class PixelLossTuner(AbstractTuner):
 
     def tune(self, model: torch.nn.Module, hr_t: torch.Tensor, lr_t, n_iters: int = 1):
         """
-        Tunes model inplace
+        Tunes model inplace to perform better on a input image. Method expects both high and low resolution
+        versions of the same image.
+        :param model: Super Resolution model to tune
+        :param hr_t: tensor representing input image of high resolution
+        :param lr_t: tensor representing input image of low resolution
+        :param n_iters: number of gradient steps to perform
         """
+        # Create optimizer every time method is called. Otherwise, one global optimizer will store statistics
+        # from all of the previous method calls
         optimizer = torch.optim.Adam(model.parameters(), lr=self.cfg.lr)
         model.train()
         for i in range(n_iters):
+            # Run low res tensor through SR model
             sr_t = model(lr_t)
+            # Compute pixel loss between SR output and original high resolution image
             loss = self.pixel_loss(sr_t, hr_t)
+            # Perform a gradient step
             loss.backward()
             optimizer.step()
             optimizer.zero_grad()
@@ -71,6 +83,9 @@ class PerceptualLossTuner(AbstractTuner):
         return 'PerceptualLossTuner'
 
     def get_feature_extractor(self) -> torch.nn.Module:
+        """
+        Load and freeze first few layers of a vgg classifier trained on imagenet
+        """
         cfg = [64, 64, 'M', 128]
         extractor = make_layers(cfg, batch_norm=False)
         ckpt = torch.load(self.cfg.extractor_weights)
@@ -82,17 +97,30 @@ class PerceptualLossTuner(AbstractTuner):
 
     def tune(self, model: torch.nn.Module, hr_t: torch.Tensor, lr_t, n_iters: int = 1):
         """
-        Tunes model inplace
+        Tunes model inplace to perform better on a input image. Method expects both high and low resolution
+        versions of the same image.
+        :param model: Super Resolution model to tune
+        :param hr_t: tensor representing input image of high resolution
+        :param lr_t: tensor representing input image of low resolution
+        :param n_iters: number of gradient steps to perform
         """
+        # Create optimizer every time method is called. Otherwise, one global optimizer will store statistics
+        # from all of the previous method calls
         optimizer = torch.optim.Adam(model.parameters(), lr=self.cfg.lr)
+
+        # Run high resolution image through the extractor to obtain the target for loss
         with torch.no_grad():
             hr_feat = self.extractor(hr_t)
 
         model.train()
         for i in range(n_iters):
+            # Run low res tensor through SR model
             sr_t = model(lr_t)
+            # Run SR output through the extractor
             sr_feat = self.extractor(sr_t)
+            # Compute perceptual loss using the extractor output
             loss = self.content_loss(sr_feat, hr_feat)
+            # Perform a gradient step
             loss.backward()
             optimizer.step()
             optimizer.zero_grad()
