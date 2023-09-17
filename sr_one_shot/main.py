@@ -33,9 +33,9 @@ def demo(args: argparse.Namespace):
     # Create model and tuner
     model = carn(scale=scale, pretrained=True)
     if args.tuner == TunerTypes.PerceptualLossTuner.value:
-        tuner = PerceptualLossTuner(model, device)
+        tuner = PerceptualLossTuner(device)
     elif args.tuner == TunerTypes.PixelLossTuner.value:
-        tuner = PixelLossTuner(model, device)
+        tuner = PixelLossTuner(device)
     else:
         raise NotImplementedError()
 
