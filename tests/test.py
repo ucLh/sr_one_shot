@@ -1,24 +1,23 @@
-import pytest
-import sys
-import os
-# sys.path.append(os.path.realpath(os.path.dirname(__file__)+"/.."))
-from sr_one_shot.main import demo
 import argparse
+
+import cv2
+import numpy as np
+import pytest
 import torch
+from piq import psnr
 from torchsr.models import carn
 from torchvision.transforms.functional import to_tensor
-import cv2
-from piq import psnr
-from sr_one_shot.tuners import PixelLossTuner, PerceptualLossTuner
-import numpy as np
+
+from sr_one_shot.main import demo
+from sr_one_shot.tuners import PerceptualLossTuner, PixelLossTuner
 
 
 def test_demo_correct():
+    # Test scenarios run with correct params
     namespace = argparse.Namespace(tuner='pixel', visualize=True)
     namespace2 = argparse.Namespace(tuner='perceptual', visualize=True)
     namespace3 = argparse.Namespace(tuner='pixel', visualize=False)
 
-    # Test scenarios run with correct params
     demo(namespace)
     demo(namespace2)
     demo(namespace3)
@@ -60,7 +59,7 @@ def test_consistency():
         assert np.allclose(orig[0], orig[1])
         assert np.allclose(tuned[0], tuned[1])
 
-    tuners = [PixelLossTuner(model, 'cpu'), PerceptualLossTuner(model, 'cpu')]
+    tuners = [PixelLossTuner('cpu'), PerceptualLossTuner('cpu')]
     for tuner in tuners:
         temp(tuner)
 

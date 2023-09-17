@@ -1,12 +1,14 @@
-from .config import cfg
-from .tuners import PerceptualLossTuner, PixelLossTuner
-import torch
-from torchsr.models import carn
-import numpy as np
-from time import time
-from tqdm import tqdm
 import argparse
 import sys
+from time import time
+
+import numpy as np
+import torch
+from torchsr.models import carn
+from tqdm import tqdm
+
+from .config import cfg
+from .tuners import PerceptualLossTuner, PixelLossTuner
 
 
 def parse_args(argv):

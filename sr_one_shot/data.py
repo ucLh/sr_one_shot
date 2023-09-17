@@ -1,13 +1,14 @@
-import cv2
 import os
 from pathlib import Path
+from typing import List
+
+import cv2
+import filetype
+import imagesize
 import numpy as np
 import torch
 from torch.utils.data import Dataset
 from torchvision.transforms.functional import to_tensor
-import imagesize
-import filetype
-from typing import List
 
 
 class SRDataset(Dataset):

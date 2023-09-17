@@ -1,17 +1,18 @@
 import argparse
-from .data import SRDataset, to_array
-from .config import cfg
-from .tuners import PerceptualLossTuner, PixelLossTuner, TunerTypes
-import torch
-from torchsr.models import carn
-from torch.utils.data import DataLoader
+import os
+import sys
+from pathlib import Path
+
 import cv2
 import numpy as np
-import gc
 import piq
-import os
-from pathlib import Path
-import sys
+import torch
+from torch.utils.data import DataLoader
+from torchsr.models import carn
+
+from .config import cfg
+from .data import SRDataset, to_array
+from .tuners import PerceptualLossTuner, PixelLossTuner, TunerTypes
 
 
 def parse_args(argv):
