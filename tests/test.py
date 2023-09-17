@@ -8,7 +8,7 @@ from piq import psnr
 from torchsr.models import carn
 from torchvision.transforms.functional import to_tensor
 
-from sr_one_shot.main import demo
+from sr_one_shot.demo import demo
 from sr_one_shot.tuners import PerceptualLossTuner, PixelLossTuner
 
 
