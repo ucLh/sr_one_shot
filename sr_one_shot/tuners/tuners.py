@@ -17,7 +17,7 @@ class AbstractTuner(ABC):
     """
     Abstract Tuner class that set the tune method interface
     """
-    def tune(self, model, hr_t, lr_t, n_iters):
+    def tune(self, model: torch.nn.Module, hr_t: torch.Tensor, lr_t, n_iters: int):
         pass
 
 
@@ -27,27 +27,25 @@ class PixelLossTuner(AbstractTuner):
     MSE loss is applied to SR network output and a normalized tensor of the original high resolution image.
     This approach of MSE loss usage is usually called `pixel loss`, hence the name.
     """
-    def __init__(self, model, device=None):
-        #TODO Pass model params instead of model
+    def __init__(self, device=None):
         self.cfg = cfg_pixel
         self.pixel_loss = torch.nn.MSELoss(reduction='mean')
-        self.optimizer = torch.optim.Adam(model.parameters(), lr=self.cfg.lr)
 
     def __repr__(self):
         return 'PixelLossTuner'
 
-    def tune(self, model, hr_t, lr_t, n_iters=1):
+    def tune(self, model: torch.nn.Module, hr_t: torch.Tensor, lr_t, n_iters: int = 1):
         """
         Tunes model inplace
         """
-        self.optimizer = torch.optim.Adam(model.parameters(), lr=self.cfg.lr)
+        optimizer = torch.optim.Adam(model.parameters(), lr=self.cfg.lr)
         model.train()
         for i in range(n_iters):
             sr_t = model(lr_t)
             loss = self.pixel_loss(sr_t, hr_t)
             loss.backward()
-            self.optimizer.step()
-            self.optimizer.zero_grad()
+            optimizer.step()
+            optimizer.zero_grad()
         model.eval()
 
 
@@ -63,17 +61,16 @@ class PerceptualLossTuner(AbstractTuner):
     I've learnt about this approach from the article
     "Perceptual Losses for Real-Time Style Transfer and Super-Resolution" (https://arxiv.org/pdf/1603.08155.pdf)
     """
-    def __init__(self, model, device):
+    def __init__(self, device):
         self.cfg = cfg_perceptual
         self.content_loss = torch.nn.MSELoss(reduction='mean')
         self.device = device
         self.extractor = self.get_feature_extractor()
-        self.optimizer = torch.optim.Adam(model.parameters(), lr=self.cfg.lr)
 
     def __repr__(self):
         return 'PerceptualLossTuner'
 
-    def get_feature_extractor(self):
+    def get_feature_extractor(self) -> torch.nn.Module:
         cfg = [64, 64, 'M', 128]
         extractor = make_layers(cfg, batch_norm=False)
         ckpt = torch.load(self.cfg.extractor_weights)
@@ -83,11 +80,11 @@ class PerceptualLossTuner(AbstractTuner):
         extractor.to(self.device)
         return extractor
 
-    def tune(self, model, hr_t, lr_t, n_iters=1):
+    def tune(self, model: torch.nn.Module, hr_t: torch.Tensor, lr_t, n_iters: int = 1):
         """
         Tunes model inplace
         """
-        self.optimizer = torch.optim.Adam(model.parameters(), lr=self.cfg.lr)
+        optimizer = torch.optim.Adam(model.parameters(), lr=self.cfg.lr)
         with torch.no_grad():
             hr_feat = self.extractor(hr_t)
 
@@ -97,7 +94,7 @@ class PerceptualLossTuner(AbstractTuner):
             sr_feat = self.extractor(sr_t)
             loss = self.content_loss(sr_feat, hr_feat)
             loss.backward()
-            self.optimizer.step()
-            self.optimizer.zero_grad()
+            optimizer.step()
+            optimizer.zero_grad()
 
         model.eval()
