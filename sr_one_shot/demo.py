@@ -57,7 +57,7 @@ def demo(args: argparse.Namespace):
         shuffle=False,
     )
 
-    diffs = []
+    diffs, psnr_orig_all, psnr_tuned_all = [], [], []
     model.to(device)
     for i, (hr_t, lr_t, name) in enumerate(dataloader):
         # Handle data from loader
@@ -73,6 +73,7 @@ def demo(args: argparse.Namespace):
             sr_t = model(lr_t)
             # Calculate metrics
             psnr_orig = piq.psnr(hr_t.clamp(0, 1), sr_t.clamp(0, 1))
+            psnr_orig_all.append(psnr_orig)
 
         # Tune the model
         tuner.tune(model, hr_t, lr_t, tuner_num_iters)
@@ -81,7 +82,8 @@ def demo(args: argparse.Namespace):
             # Inference tuned model
             sr_t_tuned = model(lr_t)
             # Calculate metrics
-            psnr_tuned = piq.psnr(hr_t.clamp(0, 1).cuda(), sr_t_tuned.clamp(0, 1).cuda())
+            psnr_tuned = piq.psnr(hr_t.clamp(0, 1), sr_t_tuned.clamp(0, 1))
+            psnr_tuned_all.append(psnr_tuned)
 
         print(f'Image {name} | PSNR before {psnr_orig} | PSNR after {psnr_tuned}')
         # Save difference for further analyzation
@@ -104,8 +106,12 @@ def demo(args: argparse.Namespace):
             new_name = '.'.join(new_name)
             cv2.imwrite(os.path.join(visualization_folder, new_name), sr_mod)
 
-    diffs = np.array(diffs)
+    diffs, psnr_orig_all, psnr_tuned_all = np.array(diffs), np.array(psnr_orig_all), np.array(psnr_tuned_all)
     print(f'Metrics improvement: Mean {np.mean(diffs)} | Median {np.median(diffs)} | Std {np.std(diffs)}')
+    print(f'Metrics before: Mean {np.mean(psnr_orig_all)} | Median {np.median(psnr_orig_all)} | '
+          f'Std {np.std(psnr_orig_all)}')
+    print(f'Metrics after: Mean {np.mean(psnr_tuned_all)} | Median {np.median(psnr_tuned_all)} | '
+          f'Std {np.std(psnr_tuned_all)}')
 
 
 if __name__ == '__main__':
