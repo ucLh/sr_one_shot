@@ -1,8 +1,26 @@
 # One-shot training method for super resolution networks
 
 This code takes [CARN](https://arxiv.org/abs/1803.08664) super resolution network 
-from [torchSR](https://github.com/Coloquinte/torchSR) library  and provides some one shot tuning methods 
-for improving accuracy on a single image provided it's high resolution version.
+from [torchSR](https://github.com/Coloquinte/torchSR) library and provides some one-shot tuning methods 
+for improving accuracy on a single image provided its high resolution version.
+
+## Methods
+
+One-shot training methods are coded in [tuners.py](./sr_one_shot/tuners/tuners.py).
+There are 2 methods there, both use gradient descent.
+
+* Pixel loss tuner. Performs gradient steps on set super resolution (SR) model using MSE loss.
+    MSE loss is applied to SR network output and a normalized tensor of the original high resolution image.
+    This approach of MSE loss usage is usually called `pixel loss`, hence the name.
+* Perceptual loss tuner. Performs gradient steps on set super resolution (SR) model using MSE loss.
+    To compute the loss we take SR network output (sr_t) and a normalized tensor of the original
+    high resolution image (hr_t).
+    We then infer (sr_t) and (hr_t) through the first few layers of a frozen network pretrained on image net (vgg in
+    this case) to obtain tensors (sr_feat) and (hr_feat). MSE loss is then applied to (sr_feat) and (hr_feat), and
+    a gradient step is done.
+    This approach of MSE loss usage is usually called `perceptual loss`, hence the name.
+    I've learnt about this approach from the article
+    ["Perceptual Losses for Real-Time Style Transfer and Super-Resolution"](https://arxiv.org/pdf/1603.08155.pdf)
 
 ### Requirements
 
