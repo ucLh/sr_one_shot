@@ -86,6 +86,6 @@ def to_array(tensor: torch.Tensor) -> np.ndarray:
     tensor = tensor.squeeze(0).clamp(0, 1)
     tensor = torch.permute(tensor, (1, 2, 0))
     tensor *= 255
-    img = np.array(tensor, dtype=np.uint8)
+    img = tensor.cpu().numpy().astype(np.uint8)
     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
     return img
