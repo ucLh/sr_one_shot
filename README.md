@@ -12,13 +12,13 @@ There are 2 methods there, both use gradient descent.
 * Pixel loss tuner. Performs gradient steps on set super resolution (SR) model using MSE loss.
     MSE loss is applied to SR network output and a normalized tensor of the original high resolution image.
     This approach of MSE loss usage is usually called `pixel loss`, hence the name.
-* Perceptual loss tuner. Performs gradient steps on set super resolution (SR) model using MSE loss.
+* Content loss tuner. Performs gradient steps on set super resolution (SR) model using MSE loss.
     To compute the loss we take SR network output (sr_t) and a normalized tensor of the original
     high resolution image (hr_t).
     We then infer (sr_t) and (hr_t) through the first few layers of a frozen network pretrained on image net (vgg in
     this case) to obtain tensors (sr_feat) and (hr_feat). MSE loss is then applied to (sr_feat) and (hr_feat), and
     a gradient step is done.
-    This approach of MSE loss usage is usually called `perceptual loss`, hence the name.
+    This approach of MSE loss usage is usually called `content loss`, hence the name.
     Approach inspired by
     ["Perceptual Losses for Real-Time Style Transfer and Super-Resolution"](https://arxiv.org/pdf/1603.08155.pdf)
 
@@ -47,7 +47,7 @@ python3 -m sr_one_shot.demo --visualize
 ```
  
 The script supports the following CLI:
- - [__`tuner`__](./sr_one_shot/demo.py#L20) - Tuner type. Allowed values: `perceptual`, `pixel`.
+ - [__`tuner`__](./sr_one_shot/demo.py#L20) - Tuner type. Allowed values: `content`, `pixel`.
  - [__`visualize`__](./sr_one_shot/demo.py#L30) - Whether to save image results.
  - [__`hr_folder`__](./sr_one_shot/demo.py#L22) - Path to the input. Should be a path to a directory with high resolution images.
  - [__`lr_folder`__](./sr_one_shot/demo.py#L24) - Directory with low resolution images. If the folder is empty the images will be

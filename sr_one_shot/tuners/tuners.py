@@ -4,14 +4,14 @@ from enum import Enum
 import torch
 from torchvision.models.vgg import make_layers
 
-from .config import cfg_perceptual, cfg_pixel
+from .config import cfg_content, cfg_pixel
 
 
 class TunerTypes(Enum):
     """
     Enum with all tuner types
     """
-    PerceptualLossTuner = 'perceptual'
+    ContentLossTuner = 'content'
     PixelLossTuner = 'pixel'
 
 
@@ -61,26 +61,26 @@ class PixelLossTuner(AbstractTuner):
         model.eval()
 
 
-class PerceptualLossTuner(AbstractTuner):
+class ContentLossTuner(AbstractTuner):
     """
-    Perceptual loss tuner. Performs gradient steps on set super resolution (SR) model using MSE loss.
+    Content loss tuner. Performs gradient steps on set super resolution (SR) model using MSE loss.
     To compute the loss we take SR network output (sr_t) and a normalized tensor of the original
     high resolution image (hr_t).
     We then infer (sr_t) and (hr_t) through the first few layers of a frozen network pretrained on image net (vgg in
     this case) to obtain tensors (sr_feat) and (hr_feat). MSE loss is then applied to (sr_feat) and (hr_feat), and
     a gradient step is done.
-    This approach of MSE loss usage is usually called `perceptual loss`, hence the name.
+    This approach of MSE loss usage is usually called `content loss`, hence the name.
     I've learnt about this approach from the article
     "Perceptual Losses for Real-Time Style Transfer and Super-Resolution" (https://arxiv.org/pdf/1603.08155.pdf)
     """
     def __init__(self, device):
-        self.cfg = cfg_perceptual
+        self.cfg = cfg_content
         self.content_loss = torch.nn.MSELoss(reduction='mean')
         self.device = device
         self.extractor = self.get_feature_extractor()
 
     def __repr__(self):
-        return 'PerceptualLossTuner'
+        return 'ContentLossTuner'
 
     def get_feature_extractor(self) -> torch.nn.Module:
         """
@@ -118,7 +118,7 @@ class PerceptualLossTuner(AbstractTuner):
             sr_t = model(lr_t)
             # Run SR output through the extractor
             sr_feat = self.extractor(sr_t)
-            # Compute perceptual loss using the extractor output
+            # Compute content loss using the extractor output
             loss = self.content_loss(sr_feat, hr_feat)
             # Perform a gradient step
             loss.backward()

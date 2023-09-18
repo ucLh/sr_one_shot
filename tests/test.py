@@ -9,14 +9,14 @@ from torchsr.models import carn
 from torchvision.transforms.functional import to_tensor
 
 from sr_one_shot.demo import demo
-from sr_one_shot.tuners import PerceptualLossTuner, PixelLossTuner
+from sr_one_shot.tuners import ContentLossTuner, PixelLossTuner
 
 
 def test_demo_correct():
     # Test scenarios run with correct params
     namespace = argparse.Namespace(tuner='pixel', visualize=True, hr_folder='assets/img/custom_hr',
                                    lr_folder='assets/img/custom_lr', vis_folder='assets/img/vis')
-    namespace2 = argparse.Namespace(tuner='perceptual', visualize=True, hr_folder='assets/img/custom_hr',
+    namespace2 = argparse.Namespace(tuner='content', visualize=True, hr_folder='assets/img/custom_hr',
                                     lr_folder='assets/img/custom_lr', vis_folder='assets/img/vis')
     namespace3 = argparse.Namespace(tuner='pixel', visualize=False, hr_folder='assets/img/custom_hr',
                                     lr_folder='assets/img/custom_lr', vis_folder='assets/img/vis')
@@ -63,7 +63,7 @@ def test_consistency():
         assert np.allclose(orig[0], orig[1])
         assert np.allclose(tuned[0], tuned[1])
 
-    tuners = [PixelLossTuner('cpu'), PerceptualLossTuner('cpu')]
+    tuners = [PixelLossTuner('cpu'), ContentLossTuner('cpu')]
     for tuner in tuners:
         temp(tuner)
 

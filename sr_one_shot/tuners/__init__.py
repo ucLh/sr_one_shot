@@ -1,1 +1,1 @@
-from .tuners import PerceptualLossTuner, PixelLossTuner, TunerTypes
+from .tuners import ContentLossTuner, PixelLossTuner, TunerTypes

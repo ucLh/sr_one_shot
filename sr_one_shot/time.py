@@ -8,7 +8,7 @@ from torchsr.models import carn
 from tqdm import tqdm
 
 from .config import cfg
-from .tuners import PerceptualLossTuner, PixelLossTuner
+from .tuners import ContentLossTuner, PixelLossTuner
 
 
 def parse_args(argv):
@@ -30,7 +30,7 @@ def main(args: argparse.Namespace):
 
     # Init model and tuners
     model = carn(scale=scale, pretrained=True)
-    tuners = [PerceptualLossTuner(device), PixelLossTuner(device)]
+    tuners = [ContentLossTuner(device), PixelLossTuner(device)]
 
     model.to(device)
 

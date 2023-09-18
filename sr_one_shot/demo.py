@@ -12,12 +12,12 @@ from torchsr.models import carn
 
 from .config import cfg
 from .data import SRDataset, to_array
-from .tuners import PerceptualLossTuner, PixelLossTuner, TunerTypes
+from .tuners import ContentLossTuner, PixelLossTuner, TunerTypes
 
 
 def parse_args(argv):
     ap = argparse.ArgumentParser()
-    ap.add_argument('--tuner', choices=['perceptual', 'pixel'], default='perceptual',
+    ap.add_argument('--tuner', choices=['content', 'pixel'], default='content',
                     help='Tuner type')
     ap.add_argument('--hr_folder', default='assets/img/custom_hr',
                     help='Path to the input. Should be a path to a directory with high resolution images')
@@ -41,8 +41,8 @@ def demo(args: argparse.Namespace):
 
     # Create model and tuner
     model = carn(scale=scale, pretrained=True)
-    if args.tuner == TunerTypes.PerceptualLossTuner.value:
-        tuner = PerceptualLossTuner(device)
+    if args.tuner == TunerTypes.ContentLossTuner.value:
+        tuner = ContentLossTuner(device)
     elif args.tuner == TunerTypes.PixelLossTuner.value:
         tuner = PixelLossTuner(device)
     else:
