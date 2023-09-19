@@ -107,7 +107,8 @@ def demo(args: argparse.Namespace):
             cv2.imwrite(os.path.join(visualization_folder, new_name), sr_mod)
 
     diffs, psnr_orig_all, psnr_tuned_all = np.array(diffs), np.array(psnr_orig_all), np.array(psnr_tuned_all)
-    print(f'Metrics improvement: Mean {np.mean(diffs)} | Median {np.median(diffs)} | Std {np.std(diffs)}')
+    print(f'Metrics improvement: Mean {np.mean(diffs)} | Median {np.median(diffs)} | Std {np.std(diffs)} | '
+          f'Min {np.min(diffs)}')
     print(f'Metrics before: Mean {np.mean(psnr_orig_all)} | Median {np.median(psnr_orig_all)} | '
           f'Std {np.std(psnr_orig_all)}')
     print(f'Metrics after: Mean {np.mean(psnr_tuned_all)} | Median {np.median(psnr_tuned_all)} | '
